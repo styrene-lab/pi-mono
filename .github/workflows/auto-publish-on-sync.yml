@@ -1,0 +1,124 @@
+name: Auto-publish after sync merge
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+jobs:
+  publish:
+    # Only run when a sync/upstream-* PR is merged (not just closed)
+    if: >
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.head.ref, 'sync/upstream-')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Determine new fork version
+        id: version
+        run: |
+          # Read the upstream version from coding-agent package.json
+          UPSTREAM_VER=$(node -p "require('./packages/coding-agent/package.json').version")
+
+          # Strip any existing fork suffix (e.g. 0.57.1-cwilson613.2 → 0.57.1)
+          BASE_VER="${UPSTREAM_VER%%-cwilson613*}"
+
+          # Find the highest existing cwilson613.N tag for this base version
+          LATEST_N=$(git tag --list "v${BASE_VER}-cwilson613.*" \
+            | sed "s/v${BASE_VER}-cwilson613\.//" \
+            | sort -n | tail -1)
+
+          NEXT_N=$(( ${LATEST_N:-0} + 1 ))
+          FORK_VER="${BASE_VER}-cwilson613.${NEXT_N}"
+
+          echo "base_version=$BASE_VER" >> $GITHUB_OUTPUT
+          echo "fork_version=$FORK_VER" >> $GITHUB_OUTPUT
+          echo "tag=v${FORK_VER}" >> $GITHUB_OUTPUT
+          echo "New fork version: $FORK_VER"
+
+      - name: Bump version in all packages
+        run: |
+          FORK_VER="${{ steps.version.outputs.fork_version }}"
+
+          # Update every package.json under packages/ that belongs to this fork
+          for pkg_dir in packages/*/; do
+            PKG_JSON="${pkg_dir}package.json"
+            if [ -f "$PKG_JSON" ]; then
+              # Only bump packages that have a cwilson613 name or are the versioned ones
+              node -e "
+                const fs = require('fs');
+                const pkg = JSON.parse(fs.readFileSync('$PKG_JSON', 'utf8'));
+                pkg.version = '${FORK_VER}';
+                fs.writeFileSync('$PKG_JSON', JSON.stringify(pkg, null, '\t') + '\n');
+                console.log('Bumped', pkg.name, 'to ${FORK_VER}');
+              "
+            fi
+          done
+
+          # Sync cross-package dependency versions
+          node scripts/sync-versions.js
+
+      - name: Build all packages
+        run: npm run build
+
+      - name: Commit version bump
+        run: |
+          git add packages/*/package.json package-lock.json
+          git commit -m "chore(release): bump fork version to ${{ steps.version.outputs.fork_version }} [skip ci]"
+          git tag "${{ steps.version.outputs.tag }}"
+          git push origin main --tags
+
+      - name: Publish @cwilson613/pi-tui
+        run: npm publish --access public
+        working-directory: packages/tui
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish @cwilson613/pi-ai
+        run: npm publish --access public
+        working-directory: packages/ai
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish @cwilson613/pi-agent-core
+        run: npm publish --access public
+        working-directory: packages/agent
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish @cwilson613/pi-coding-agent
+        run: npm publish --access public
+        working-directory: packages/coding-agent
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Summary
+        run: |
+          echo "### Published ${{ steps.version.outputs.fork_version }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- \`@cwilson613/pi-tui\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`@cwilson613/pi-ai\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`@cwilson613/pi-agent-core\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`@cwilson613/pi-coding-agent\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Tag: \`${{ steps.version.outputs.tag }}\`" >> $GITHUB_STEP_SUMMARY
