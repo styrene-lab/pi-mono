@@ -25,14 +25,15 @@ jobs:
           node-version: '22'
           registry-url: 'https://registry.npmjs.org'
 
-
       - name: Install dependencies
         run: npm ci
 
+      # Build using root script which enforces correct dependency order:
+      # tui → ai → agent → coding-agent (mirrors upstream's build script exactly)
       - name: Build all packages
-        run: npm run build --workspaces --if-present
+        run: npm run build
 
-      # Publish in dependency order: agent-core → ai → tui → coding-agent
+      # Publish in dependency order
       - name: Publish @cwilson613/pi-agent-core
         run: npm publish --access public ${{ inputs.dry_run == 'true' && '--dry-run' || '' }}
         working-directory: packages/agent
