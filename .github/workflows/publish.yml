@@ -25,6 +25,36 @@ jobs:
           node-version: '22'
           registry-url: 'https://registry.npmjs.org'
 
+      - name: Extract version from tag
+        id: version
+        run: |
+          # On a tag push, GITHUB_REF_NAME is e.g. "v0.57.1-cwilson613.2"
+          # On workflow_dispatch there is no tag — use what's already in package.json
+          if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then
+            FORK_VER="${GITHUB_REF_NAME#v}"
+          else
+            FORK_VER=$(node -p "require('./packages/coding-agent/package.json').version")
+          fi
+          echo "fork_version=$FORK_VER" >> $GITHUB_OUTPUT
+          echo "Publishing version: $FORK_VER"
+
+      - name: Stamp version into all packages
+        run: |
+          FORK_VER="${{ steps.version.outputs.fork_version }}"
+          for pkg_json in packages/*/package.json; do
+            node -e "
+              const fs = require('fs');
+              const pkg = JSON.parse(fs.readFileSync('$pkg_json', 'utf8'));
+              const old = pkg.version;
+              pkg.version = '${FORK_VER}';
+              fs.writeFileSync('$pkg_json', JSON.stringify(pkg, null, '\t') + '\n');
+              console.log('Stamped', pkg.name, old, '->', '${FORK_VER}');
+            "
+          done
+
+      - name: Sync inter-package dependency versions
+        run: node scripts/sync-versions.js
+
       - name: Install dependencies
         run: npm ci
 
@@ -34,9 +64,9 @@ jobs:
         run: npm run build
 
       # Publish in dependency order
-      - name: Publish @cwilson613/pi-agent-core
+      - name: Publish @cwilson613/pi-tui
         run: npm publish --access public ${{ inputs.dry_run == 'true' && '--dry-run' || '' }}
-        working-directory: packages/agent
+        working-directory: packages/tui
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -46,9 +76,9 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish @cwilson613/pi-tui
+      - name: Publish @cwilson613/pi-agent-core
         run: npm publish --access public ${{ inputs.dry_run == 'true' && '--dry-run' || '' }}
-        working-directory: packages/tui
+        working-directory: packages/agent
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -57,3 +87,15 @@ jobs:
         working-directory: packages/coding-agent
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### Published ${{ steps.version.outputs.fork_version }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- \`@cwilson613/pi-tui\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`@cwilson613/pi-ai\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`@cwilson613/pi-agent-core\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`@cwilson613/pi-coding-agent\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Tag: \`$GITHUB_REF_NAME\`" >> $GITHUB_STEP_SUMMARY
