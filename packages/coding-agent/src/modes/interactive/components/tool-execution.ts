@@ -25,6 +25,99 @@ import { truncateToVisualLines } from "./visual-truncate.js";
 
 // Preview line limit for bash when not expanded
 const BASH_PREVIEW_LINES = 5;
+
+// Shell builtins and common top-level commands to highlight as keywords
+const SHELL_KEYWORDS = new Set([
+	"cd",
+	"export",
+	"unset",
+	"source",
+	".",
+	"exec",
+	"eval",
+	"echo",
+	"printf",
+	"read",
+	"set",
+	"shift",
+	"return",
+	"if",
+	"then",
+	"else",
+	"elif",
+	"fi",
+	"for",
+	"do",
+	"done",
+	"while",
+	"until",
+	"case",
+	"esac",
+	"function",
+	"exit",
+	"kill",
+	"wait",
+	"trap",
+	"jobs",
+	"fg",
+	"bg",
+	"true",
+	"false",
+]);
+
+/**
+ * Apply syntax highlighting to a bash command string.
+ * Tokenizes: shell keywords, flags (--flag, -f), quoted strings,
+ * shell operators (&&, ||, |, ;, >, >>), and path-like arguments.
+ */
+function highlightBashCommand(command: string): string {
+	// Handle multi-line commands — highlight each "segment" between newlines/semicolons
+	const parts: string[] = [];
+	// Simple token-by-token pass using a regex
+	const tokenRe =
+		/("(?:[^"\\]|\\.)*")|('(?:[^'\\]|\\.)*')|(&&|\|\||>>|[|&;><])|(--?[a-zA-Z0-9][-a-zA-Z0-9_]*)|(~?\/[^\s;|&><"']*|\.\.?\/[^\s;|&><"']*)|([^\s;|&><"']+)/g;
+
+	let lastIndex = 0;
+	let isFirstToken = true;
+
+	for (let match = tokenRe.exec(command); match !== null; match = tokenRe.exec(command)) {
+		// Preserve whitespace between tokens
+		if (match.index > lastIndex) {
+			parts.push(command.slice(lastIndex, match.index));
+		}
+		lastIndex = tokenRe.lastIndex;
+
+		const [, dquote, squote, operator, flag, filepath, word] = match;
+
+		if (dquote || squote) {
+			parts.push(theme.fg("syntaxString", dquote ?? squote ?? ""));
+		} else if (operator) {
+			parts.push(theme.fg("syntaxOperator", operator));
+			isFirstToken = true; // Next non-whitespace is a command name
+		} else if (flag) {
+			parts.push(theme.fg("warning", flag));
+		} else if (filepath) {
+			parts.push(theme.fg("accent", filepath));
+		} else if (word) {
+			if (isFirstToken) {
+				const isKeyword = SHELL_KEYWORDS.has(word);
+				parts.push(isKeyword ? theme.fg("syntaxKeyword", word) : theme.fg("toolTitle", word));
+				isFirstToken = false;
+			} else if (SHELL_KEYWORDS.has(word)) {
+				parts.push(theme.fg("syntaxKeyword", word));
+			} else {
+				parts.push(theme.fg("toolOutput", word));
+			}
+		}
+	}
+
+	// Append any trailing whitespace
+	if (lastIndex < command.length) {
+		parts.push(command.slice(lastIndex));
+	}
+
+	return parts.join("");
+}
 // During partial write tool-call streaming, re-highlight the first N lines fully
 // to keep multiline tokenization mostly correct without re-highlighting the full file.
 const WRITE_PARTIAL_FULL_HIGHLIGHT_LINES = 50;
@@ -509,13 +602,16 @@ export class ToolExecutionComponent extends Container {
 		const command = str(this.args?.command);
 		const timeout = this.args?.timeout as number | undefined;
 
-		// Header
+		// Header — syntax-highlight the command
 		const timeoutSuffix = timeout ? theme.fg("muted", ` (timeout ${timeout}s)`) : "";
 		const commandDisplay =
-			command === null ? theme.fg("error", "[invalid arg]") : command ? command : theme.fg("toolOutput", "...");
-		this.contentBox.addChild(
-			new Text(theme.fg("toolTitle", theme.bold(`$ ${commandDisplay}`)) + timeoutSuffix, 0, 0),
-		);
+			command === null
+				? theme.fg("error", "[invalid arg]")
+				: command
+					? highlightBashCommand(command)
+					: theme.fg("toolOutput", "...");
+		const promptGlyph = theme.fg("syntaxOperator", "$");
+		this.contentBox.addChild(new Text(`${promptGlyph} ${commandDisplay}${timeoutSuffix}`, 0, 0));
 
 		if (this.result) {
 			const output = this.getTextOutput().trim();
