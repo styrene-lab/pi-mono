@@ -9,12 +9,12 @@ import { createRequire } from "node:module";
 import * as os from "node:os";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
-import { createJiti } from "@mariozechner/jiti";
 import * as _bundledPiAgentCore from "@cwilson613/pi-agent-core";
 import * as _bundledPiAi from "@cwilson613/pi-ai";
 import * as _bundledPiAiOauth from "@cwilson613/pi-ai/oauth";
 import type { KeyId } from "@cwilson613/pi-tui";
 import * as _bundledPiTui from "@cwilson613/pi-tui";
+import { createJiti } from "@mariozechner/jiti";
 // Static imports of packages that extensions may use.
 // These MUST be static so Bun bundles them into the compiled binary.
 // The virtualModules option then makes them available to extensions.
@@ -519,9 +519,19 @@ export async function discoverAndLoadExtensions(
 	const localExtDir = path.join(cwd, ".pi", "extensions");
 	addPaths(discoverExtensionsInDir(localExtDir));
 
-	// 2. Global extensions: agentDir/extensions/
-	const globalExtDir = path.join(agentDir, "extensions");
-	addPaths(discoverExtensionsInDir(globalExtDir));
+	// 2. Global extensions:
+	//    If agentDir itself has a package.json with "pi.extensions" field (e.g. omegon
+	//    is configured as the agentDir via PI_CODING_AGENT_DIR), use its explicit list.
+	//    This lets a pi package act as its own agent directory without the auto-scanner
+	//    picking up non-extension .ts files alongside real extension entry points.
+	//    Otherwise fall back to auto-scanning agentDir/extensions/*.ts as before.
+	const agentDirEntries = resolveExtensionEntries(agentDir);
+	if (agentDirEntries) {
+		addPaths(agentDirEntries);
+	} else {
+		const globalExtDir = path.join(agentDir, "extensions");
+		addPaths(discoverExtensionsInDir(globalExtDir));
+	}
 
 	// 3. Explicitly configured paths
 	for (const p of configuredPaths) {
