@@ -1657,9 +1657,14 @@ export class DefaultPackageManager implements PackageManager {
 			projectBaseDir,
 		);
 
+		// If globalBaseDir itself is a pi package (has a package.json with "pi" field),
+		// use its explicit extension list instead of auto-scanning globalBaseDir/extensions/.
+		// This enables standalone mode where PI_CODING_AGENT_DIR points to an omegon-like
+		// package rather than a plain ~/.pi/agent/ directory.
+		const globalBaseDirEntries = resolveExtensionEntries(globalBaseDir);
 		addResources(
 			"extensions",
-			collectAutoExtensionEntries(userDirs.extensions),
+			globalBaseDirEntries ?? collectAutoExtensionEntries(userDirs.extensions),
 			userMetadata,
 			userOverrides.extensions,
 			globalBaseDir,
