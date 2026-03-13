@@ -26,6 +26,10 @@ export type BashToolInput = Static<typeof bashSchema>;
 export interface BashToolDetails {
 	truncation?: TruncationResult;
 	fullOutputPath?: string;
+	/** Exit code of the process. 0 = success, non-zero = error, null = killed/aborted. */
+	exitCode?: number | null;
+	/** Wall-clock execution time in milliseconds. */
+	durationMs?: number;
 }
 
 /**
@@ -184,6 +188,8 @@ export function createBashTool(cwd: string, options?: BashToolOptions): AgentToo
 			const spawnContext = resolveSpawnContext(resolvedCommand, cwd, spawnHook);
 
 			return new Promise((resolve, reject) => {
+				const startTime = Date.now();
+
 				// We'll stream to a temp file if output gets large
 				let tempFilePath: string | undefined;
 				let tempFileStream: ReturnType<typeof createWriteStream> | undefined;
@@ -250,6 +256,8 @@ export function createBashTool(cwd: string, options?: BashToolOptions): AgentToo
 							tempFileStream.end();
 						}
 
+						const durationMs = Date.now() - startTime;
+
 						// Combine all buffered chunks
 						const fullBuffer = Buffer.concat(chunks);
 						const fullOutput = fullBuffer.toString("utf-8");
@@ -265,6 +273,8 @@ export function createBashTool(cwd: string, options?: BashToolOptions): AgentToo
 							details = {
 								truncation,
 								fullOutputPath: tempFilePath,
+								exitCode,
+								durationMs,
 							};
 
 							// Build actionable notice
@@ -286,7 +296,10 @@ export function createBashTool(cwd: string, options?: BashToolOptions): AgentToo
 							outputText += `\n\nCommand exited with code ${exitCode}`;
 							reject(new Error(outputText));
 						} else {
-							resolve({ content: [{ type: "text", text: outputText }], details });
+							resolve({
+								content: [{ type: "text", text: outputText }],
+								details: { ...(details ?? {}), exitCode: exitCode ?? 0, durationMs },
+							});
 						}
 					})
 					.catch((err: Error) => {

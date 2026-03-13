@@ -192,6 +192,9 @@ export class ToolExecutionComponent extends Container {
 	// Cached edit diff preview (computed when args arrive, before tool executes)
 	private editDiffPreview?: EditDiffResult | EditDiffError;
 	private editDiffArgsKey?: string; // Track which args the preview is for
+	// Execution timing — set when args are complete, used to compute duration
+	private execStartTime?: number;
+	private execDurationMs?: number;
 	// Cached converted images for Kitty protocol (which requires PNG), keyed by index
 	private convertedImages: Map<number, { data: string; mimeType: string }> = new Map();
 	// Incremental syntax highlighting cache for write tool call args
@@ -345,9 +348,10 @@ export class ToolExecutionComponent extends Container {
 
 	/**
 	 * Signal that args are complete (tool is about to execute).
-	 * This triggers diff computation for edit tool.
+	 * This triggers diff computation for edit tool and starts the execution timer.
 	 */
 	setArgsComplete(): void {
+		this.execStartTime = Date.now();
 		if (this.toolName === "write") {
 			const rawPath = str(this.args?.file_path ?? this.args?.path);
 			const fileContent = str(this.args?.content);
@@ -401,6 +405,11 @@ export class ToolExecutionComponent extends Container {
 	): void {
 		this.result = result;
 		this.isPartial = isPartial;
+		// Capture duration when result first arrives (not on partial updates)
+		if (!isPartial && this.execDurationMs === undefined) {
+			this.execDurationMs = result.details?.durationMs ??
+				(this.execStartTime !== undefined ? Date.now() - this.execStartTime : undefined);
+		}
 		if (this.toolName === "write" && !isPartial) {
 			const rawPath = str(this.args?.file_path ?? this.args?.path);
 			const fileContent = str(this.args?.content);
@@ -595,6 +604,15 @@ export class ToolExecutionComponent extends Container {
 		}
 	}
 
+	/** Format a duration in ms to a concise human-readable string. */
+	private static formatDuration(ms: number): string {
+		if (ms < 1000) return `${ms}ms`;
+		if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
+		const m = Math.floor(ms / 60000);
+		const s = Math.round((ms % 60000) / 1000);
+		return s > 0 ? `${m}m${s}s` : `${m}m`;
+	}
+
 	/**
 	 * Render bash content using visual line truncation (like bash-execution.ts)
 	 */
@@ -603,7 +621,6 @@ export class ToolExecutionComponent extends Container {
 		const timeout = this.args?.timeout as number | undefined;
 
 		// Header — syntax-highlight the command
-		const timeoutSuffix = timeout ? theme.fg("muted", ` (timeout ${timeout}s)`) : "";
 		const commandDisplay =
 			command === null
 				? theme.fg("error", "[invalid arg]")
@@ -611,7 +628,58 @@ export class ToolExecutionComponent extends Container {
 					? highlightBashCommand(command)
 					: theme.fg("toolOutput", "...");
 		const promptGlyph = theme.fg("syntaxOperator", "$");
-		this.contentBox.addChild(new Text(`${promptGlyph} ${commandDisplay}${timeoutSuffix}`, 0, 0));
+		this.contentBox.addChild(new Text(`${promptGlyph} ${commandDisplay}`, 0, 0));
+
+		// Metadata line: cwd · duration · exit code (or timeout)
+		{
+			const sep = theme.fg("dim", " · ");
+			const cwdDisplay = theme.fg("dim", shortenPath(this.cwd));
+
+			let metaParts = cwdDisplay;
+
+			if (this.result && !this.isPartial) {
+				// Duration
+				const durMs = this.execDurationMs;
+				if (durMs !== undefined) {
+					metaParts += sep + theme.fg("muted", ToolExecutionComponent.formatDuration(durMs));
+				}
+
+				// Exit code / error type
+				if (this.result.isError) {
+					const output = this.getTextOutput();
+					const exitMatch = output.match(/Command exited with code (\d+)/);
+					const timedOut = output.includes("timed out after");
+					const aborted = output.includes("Command aborted");
+
+					if (timedOut) {
+						const ts = timeout ? ` ${timeout}s` : "";
+						metaParts += sep + theme.fg("error", `timeout${ts}`);
+					} else if (aborted) {
+						metaParts += sep + theme.fg("warning", "aborted");
+					} else if (exitMatch) {
+						metaParts += sep + theme.fg("error", `exit ${exitMatch[1]}`);
+					}
+				} else {
+					const exitCode = this.result.details?.exitCode;
+					if (exitCode === 0) {
+						metaParts += sep + theme.fg("success", "exit 0");
+					}
+				}
+
+				if (timeout && !this.result.isError) {
+					// Show timeout budget remaining hint only for long commands
+					const durMs2 = this.execDurationMs ?? 0;
+					if (durMs2 > timeout * 800) {
+						// used >80% of timeout budget
+						metaParts += sep + theme.fg("warning", `~${timeout}s limit`);
+					}
+				}
+			} else if (this.isPartial && timeout) {
+				metaParts += sep + theme.fg("muted", `timeout ${timeout}s`);
+			}
+
+			this.contentBox.addChild(new Text(metaParts, 0, 0));
+		}
 
 		if (this.result) {
 			const output = this.getTextOutput().trim();
