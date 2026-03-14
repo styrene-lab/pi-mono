@@ -1,5 +1,5 @@
 {
-	"name": "@mariozechner/pi-coding-agent",
+	"name": "@cwilson613/pi-coding-agent",
 	"version": "0.58.1",
 	"description": "Coding agent CLI with read, bash, edit, write tools and session management",
 	"type": "module",
@@ -39,10 +39,10 @@
 		"prepublishOnly": "npm run clean && npm run build"
 	},
 	"dependencies": {
-		"@mariozechner/jiti": "^2.6.2",
-		"@mariozechner/pi-agent-core": "^0.58.1",
-		"@mariozechner/pi-ai": "^0.58.1",
-		"@mariozechner/pi-tui": "^0.58.1",
+		"@cwilson613/jiti": "^2.6.2",
+		"@cwilson613/pi-agent-core": "^0.58.1",
+		"@cwilson613/pi-ai": "^0.58.1",
+		"@cwilson613/pi-tui": "^0.58.1",
 		"@silvia-odwyer/photon-node": "^0.3.4",
 		"chalk": "^5.5.0",
 		"cli-highlight": "^2.1.11",
@@ -66,7 +66,7 @@
 		}
 	},
 	"optionalDependencies": {
-		"@mariozechner/clipboard": "^0.3.2"
+		"@cwilson613/clipboard": "^0.3.2"
 	},
 	"devDependencies": {
 		"@types/diff": "^7.0.2",

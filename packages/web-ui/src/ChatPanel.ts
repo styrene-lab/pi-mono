@@ -1,8 +1,8 @@
-import { Badge } from "@mariozechner/mini-lit/dist/Badge.js";
+import { Badge } from "@cwilson613/mini-lit/dist/Badge.js";
 import { html, LitElement } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import "./components/AgentInterface.js";
-import type { Agent, AgentTool } from "@mariozechner/pi-agent-core";
+import type { Agent, AgentTool } from "@cwilson613/pi-agent-core";
 import type { AgentInterface } from "./components/AgentInterface.js";
 import { ArtifactsRuntimeProvider } from "./components/sandbox/ArtifactsRuntimeProvider.js";
 import { AttachmentsRuntimeProvider } from "./components/sandbox/AttachmentsRuntimeProvider.js";

@@ -1,6 +1,6 @@
-import "@mariozechner/mini-lit/dist/ThemeToggle.js";
-import { Agent, type AgentMessage } from "@mariozechner/pi-agent-core";
-import { getModel } from "@mariozechner/pi-ai";
+import "@cwilson613/mini-lit/dist/ThemeToggle.js";
+import { Agent, type AgentMessage } from "@cwilson613/pi-agent-core";
+import { getModel } from "@cwilson613/pi-ai";
 import {
 	type AgentState,
 	ApiKeyPromptDialog,
@@ -18,13 +18,13 @@ import {
 	SettingsDialog,
 	SettingsStore,
 	setAppStorage,
-} from "@mariozechner/pi-web-ui";
+} from "@cwilson613/pi-web-ui";
 import { html, render } from "lit";
 import { Bell, History, Plus, Settings } from "lucide";
 import "./app.css";
-import { icon } from "@mariozechner/mini-lit";
-import { Button } from "@mariozechner/mini-lit/dist/Button.js";
-import { Input } from "@mariozechner/mini-lit/dist/Input.js";
+import { icon } from "@cwilson613/mini-lit";
+import { Button } from "@cwilson613/mini-lit/dist/Button.js";
+import { Input } from "@cwilson613/mini-lit/dist/Input.js";
 import { createSystemNotification, customConvertToLlm, registerCustomMessageRenderers } from "./custom-messages.js";
 
 // Register custom message renderers

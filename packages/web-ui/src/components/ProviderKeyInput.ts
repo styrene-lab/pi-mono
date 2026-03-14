@@ -1,7 +1,7 @@
-import { i18n } from "@mariozechner/mini-lit";
-import { Badge } from "@mariozechner/mini-lit/dist/Badge.js";
-import { Button } from "@mariozechner/mini-lit/dist/Button.js";
-import { type Context, complete, getModel } from "@mariozechner/pi-ai";
+import { i18n } from "@cwilson613/mini-lit";
+import { Badge } from "@cwilson613/mini-lit/dist/Badge.js";
+import { Button } from "@cwilson613/mini-lit/dist/Button.js";
+import { type Context, complete, getModel } from "@cwilson613/pi-ai";
 import { html, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { getAppStorage } from "../storage/app-storage.js";

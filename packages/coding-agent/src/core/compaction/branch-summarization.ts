@@ -5,9 +5,9 @@
  * a summary of the branch being left so context isn't lost.
  */
 
-import type { AgentMessage } from "@mariozechner/pi-agent-core";
-import type { Model } from "@mariozechner/pi-ai";
-import { completeSimple } from "@mariozechner/pi-ai";
+import type { AgentMessage } from "@cwilson613/pi-agent-core";
+import type { Model } from "@cwilson613/pi-ai";
+import { completeSimple } from "@cwilson613/pi-ai";
 import {
 	convertToLlm,
 	createBranchSummaryMessage,

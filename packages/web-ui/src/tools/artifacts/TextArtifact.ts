@@ -1,5 +1,5 @@
-import { CopyButton } from "@mariozechner/mini-lit/dist/CopyButton.js";
-import { DownloadButton } from "@mariozechner/mini-lit/dist/DownloadButton.js";
+import { CopyButton } from "@cwilson613/mini-lit/dist/CopyButton.js";
+import { DownloadButton } from "@cwilson613/mini-lit/dist/DownloadButton.js";
 import hljs from "highlight.js";
 import { html } from "lit";
 import { customElement, property } from "lit/decorators.js";

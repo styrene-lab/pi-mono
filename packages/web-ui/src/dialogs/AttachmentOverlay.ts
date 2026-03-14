@@ -1,6 +1,6 @@
-import "@mariozechner/mini-lit/dist/ModeToggle.js";
-import { icon } from "@mariozechner/mini-lit";
-import { Button } from "@mariozechner/mini-lit/dist/Button.js";
+import "@cwilson613/mini-lit/dist/ModeToggle.js";
+import { icon } from "@cwilson613/mini-lit";
+import { Button } from "@cwilson613/mini-lit/dist/Button.js";
 import { renderAsync } from "docx-preview";
 import { html, LitElement } from "lit";
 import { state } from "lit/decorators.js";

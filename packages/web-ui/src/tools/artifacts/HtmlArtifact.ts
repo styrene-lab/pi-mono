@@ -12,11 +12,11 @@ import "../../components/SandboxedIframe.js";
 import { ArtifactElement } from "./ArtifactElement.js";
 import type { Console } from "./Console.js";
 import "./Console.js";
-import { icon } from "@mariozechner/mini-lit";
-import { Button } from "@mariozechner/mini-lit/dist/Button.js";
-import { CopyButton } from "@mariozechner/mini-lit/dist/CopyButton.js";
-import { DownloadButton } from "@mariozechner/mini-lit/dist/DownloadButton.js";
-import { PreviewCodeToggle } from "@mariozechner/mini-lit/dist/PreviewCodeToggle.js";
+import { icon } from "@cwilson613/mini-lit";
+import { Button } from "@cwilson613/mini-lit/dist/Button.js";
+import { CopyButton } from "@cwilson613/mini-lit/dist/CopyButton.js";
+import { DownloadButton } from "@cwilson613/mini-lit/dist/DownloadButton.js";
+import { PreviewCodeToggle } from "@cwilson613/mini-lit/dist/PreviewCodeToggle.js";
 
 @customElement("html-artifact")
 export class HtmlArtifact extends ArtifactElement {

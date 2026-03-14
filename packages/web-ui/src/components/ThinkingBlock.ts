@@ -1,4 +1,4 @@
-import { icon } from "@mariozechner/mini-lit";
+import { icon } from "@cwilson613/mini-lit";
 import { html, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { ChevronRight } from "lucide";

@@ -1,7 +1,7 @@
 /**
  * Extension loader - loads TypeScript extension modules using jiti.
  *
- * Uses @mariozechner/jiti fork with virtualModules support for compiled Bun binaries.
+ * Uses @cwilson613/jiti fork with virtualModules support for compiled Bun binaries.
  */
 
 import * as fs from "node:fs";
@@ -9,19 +9,19 @@ import { createRequire } from "node:module";
 import * as os from "node:os";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
-import { createJiti } from "@mariozechner/jiti";
-import * as _bundledPiAgentCore from "@mariozechner/pi-agent-core";
-import * as _bundledPiAi from "@mariozechner/pi-ai";
-import * as _bundledPiAiOauth from "@mariozechner/pi-ai/oauth";
-import type { KeyId } from "@mariozechner/pi-tui";
-import * as _bundledPiTui from "@mariozechner/pi-tui";
+import { createJiti } from "@cwilson613/jiti";
+import * as _bundledPiAgentCore from "@cwilson613/pi-agent-core";
+import * as _bundledPiAi from "@cwilson613/pi-ai";
+import * as _bundledPiAiOauth from "@cwilson613/pi-ai/oauth";
+import type { KeyId } from "@cwilson613/pi-tui";
+import * as _bundledPiTui from "@cwilson613/pi-tui";
 // Static imports of packages that extensions may use.
 // These MUST be static so Bun bundles them into the compiled binary.
 // The virtualModules option then makes them available to extensions.
 import * as _bundledTypebox from "@sinclair/typebox";
 import { getAgentDir, isBunBinary } from "../../config.js";
 // NOTE: This import works because loader.ts exports are NOT re-exported from index.ts,
-// avoiding a circular dependency. Extensions can import from @mariozechner/pi-coding-agent.
+// avoiding a circular dependency. Extensions can import from @cwilson613/pi-coding-agent.
 import * as _bundledPiCodingAgent from "../../index.js";
 import { createEventBus, type EventBus } from "../event-bus.js";
 import type { ExecOptions } from "../exec.js";
@@ -41,11 +41,11 @@ import type {
 /** Modules available to extensions via virtualModules (for compiled Bun binary) */
 const VIRTUAL_MODULES: Record<string, unknown> = {
 	"@sinclair/typebox": _bundledTypebox,
-	"@mariozechner/pi-agent-core": _bundledPiAgentCore,
-	"@mariozechner/pi-tui": _bundledPiTui,
-	"@mariozechner/pi-ai": _bundledPiAi,
-	"@mariozechner/pi-ai/oauth": _bundledPiAiOauth,
-	"@mariozechner/pi-coding-agent": _bundledPiCodingAgent,
+	"@cwilson613/pi-agent-core": _bundledPiAgentCore,
+	"@cwilson613/pi-tui": _bundledPiTui,
+	"@cwilson613/pi-ai": _bundledPiAi,
+	"@cwilson613/pi-ai/oauth": _bundledPiAiOauth,
+	"@cwilson613/pi-coding-agent": _bundledPiCodingAgent,
 };
 
 const require = createRequire(import.meta.url);
@@ -74,11 +74,11 @@ function getAliases(): Record<string, string> {
 	};
 
 	_aliases = {
-		"@mariozechner/pi-coding-agent": packageIndex,
-		"@mariozechner/pi-agent-core": resolveWorkspaceOrImport("agent/dist/index.js", "@mariozechner/pi-agent-core"),
-		"@mariozechner/pi-tui": resolveWorkspaceOrImport("tui/dist/index.js", "@mariozechner/pi-tui"),
-		"@mariozechner/pi-ai": resolveWorkspaceOrImport("ai/dist/index.js", "@mariozechner/pi-ai"),
-		"@mariozechner/pi-ai/oauth": resolveWorkspaceOrImport("ai/dist/oauth.js", "@mariozechner/pi-ai/oauth"),
+		"@cwilson613/pi-coding-agent": packageIndex,
+		"@cwilson613/pi-agent-core": resolveWorkspaceOrImport("agent/dist/index.js", "@cwilson613/pi-agent-core"),
+		"@cwilson613/pi-tui": resolveWorkspaceOrImport("tui/dist/index.js", "@cwilson613/pi-tui"),
+		"@cwilson613/pi-ai": resolveWorkspaceOrImport("ai/dist/index.js", "@cwilson613/pi-ai"),
+		"@cwilson613/pi-ai/oauth": resolveWorkspaceOrImport("ai/dist/oauth.js", "@cwilson613/pi-ai/oauth"),
 		"@sinclair/typebox": typeboxRoot,
 	};
 

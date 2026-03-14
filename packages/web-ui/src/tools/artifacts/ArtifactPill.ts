@@ -1,4 +1,4 @@
-import { icon } from "@mariozechner/mini-lit";
+import { icon } from "@cwilson613/mini-lit";
 import { html, type TemplateResult } from "lit";
 import { FileCode2 } from "lucide";
 import type { ArtifactsPanel } from "./artifacts.js";

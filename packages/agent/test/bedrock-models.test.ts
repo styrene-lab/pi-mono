@@ -21,8 +21,8 @@
  * 5. **Invalid Signature Format**: Model validates signature format (Anthropic newer models).
  */
 
-import type { AssistantMessage } from "@mariozechner/pi-ai";
-import { getModels } from "@mariozechner/pi-ai";
+import type { AssistantMessage } from "@cwilson613/pi-ai";
+import { getModels } from "@cwilson613/pi-ai";
 import { describe, expect, it } from "vitest";
 import { Agent } from "../src/index.js";
 import { hasBedrockCredentials } from "./bedrock-utils.js";

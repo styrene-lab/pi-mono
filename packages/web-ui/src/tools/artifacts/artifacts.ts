@@ -1,8 +1,8 @@
-import { icon } from "@mariozechner/mini-lit";
-import "@mariozechner/mini-lit/dist/MarkdownBlock.js";
-import { Button } from "@mariozechner/mini-lit/dist/Button.js";
-import type { Agent, AgentMessage, AgentTool } from "@mariozechner/pi-agent-core";
-import { StringEnum, type ToolCall } from "@mariozechner/pi-ai";
+import { icon } from "@cwilson613/mini-lit";
+import "@cwilson613/mini-lit/dist/MarkdownBlock.js";
+import { Button } from "@cwilson613/mini-lit/dist/Button.js";
+import type { Agent, AgentMessage, AgentTool } from "@cwilson613/pi-agent-core";
+import { StringEnum, type ToolCall } from "@cwilson613/pi-ai";
 import { type Static, Type } from "@sinclair/typebox";
 import { html, LitElement, type TemplateResult } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
