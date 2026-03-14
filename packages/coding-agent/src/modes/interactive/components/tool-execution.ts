@@ -204,12 +204,17 @@ export class ToolExecutionComponent extends Container {
 	/**
 	 * Check if we should use built-in rendering for this tool.
 	 * Returns true if the tool name is a built-in AND either there's no toolDefinition
-	 * or the toolDefinition doesn't provide custom renderers.
+	 * or the toolDefinition doesn't provide custom renderers that REPLACE content.
+	 *
+	 * A renderCall alone is treated as a header override — the built-in result
+	 * rendering (diffs, syntax highlighting, etc.) is preserved. Only a renderResult
+	 * fully replaces the built-in content rendering.
 	 */
 	private shouldUseBuiltInRenderer(): boolean {
 		const isBuiltInName = this.toolName in allTools;
-		const hasCustomRenderers = this.toolDefinition?.renderCall || this.toolDefinition?.renderResult;
-		return isBuiltInName && !hasCustomRenderers;
+		// Only renderResult replaces built-in content. renderCall alone just overrides the header.
+		const hasContentOverride = !!this.toolDefinition?.renderResult;
+		return isBuiltInName && !hasContentOverride;
 	}
 
 	updateArgs(args: any): void {
