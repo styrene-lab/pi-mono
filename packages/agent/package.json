@@ -17,7 +17,7 @@
 		"prepublishOnly": "npm run clean && npm run build"
 	},
 	"dependencies": {
-		"@cwilson613/pi-ai": "0.58.1-cwilson613.1"
+		"@cwilson613/pi-ai": "file:../ai"
 	},
 	"keywords": [
 		"ai",

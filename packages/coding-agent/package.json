@@ -39,10 +39,10 @@
 		"prepublishOnly": "npm run clean && npm run build"
 	},
 	"dependencies": {
-		"@mariozechner/jiti": "0.58.1-cwilson613.1",
-		"@cwilson613/pi-agent-core": "0.58.1-cwilson613.1",
-		"@cwilson613/pi-ai": "0.58.1-cwilson613.1",
-		"@cwilson613/pi-tui": "0.58.1-cwilson613.1",
+		"@mariozechner/jiti": "^2.6.2",
+		"@cwilson613/pi-agent-core": "file:../agent",
+		"@cwilson613/pi-ai": "file:../ai",
+		"@cwilson613/pi-tui": "file:../tui",
 		"@silvia-odwyer/photon-node": "^0.3.4",
 		"chalk": "^5.5.0",
 		"cli-highlight": "^2.1.11",
