@@ -90,8 +90,8 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/badlogic/pi-mono.git",
-		"directory": "packages/coding-agent"
+		"url": "git+https://github.com/styrene-lab/omegon.git",
+		"directory": "vendor/pi-mono/packages/coding-agent"
 	},
 	"engines": {
 		"node": ">=20.6.0"

@@ -45,8 +45,8 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/badlogic/pi-mono.git",
-		"directory": "packages/mom"
+		"url": "git+https://github.com/styrene-lab/omegon.git",
+		"directory": "vendor/pi-mono/packages/mom"
 	},
 	"engines": {
 		"node": ">=20.0.0"

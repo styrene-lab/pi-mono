@@ -26,8 +26,8 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/badlogic/pi-mono.git",
-		"directory": "packages/pods"
+		"url": "git+https://github.com/styrene-lab/omegon.git",
+		"directory": "vendor/pi-mono/packages/pods"
 	},
 	"engines": {
 		"node": ">=20.0.0"

@@ -47,5 +47,10 @@
 		"mini-lit"
 	],
 	"author": "Mario Zechner",
-	"license": "MIT"
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/styrene-lab/omegon.git",
+		"directory": "vendor/pi-mono/packages/web-ui"
+	}
 }
