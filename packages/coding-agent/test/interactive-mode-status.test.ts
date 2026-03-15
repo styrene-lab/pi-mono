@@ -1,4 +1,4 @@
-import { Container } from "@cwilson613/pi-tui";
+import { Container } from "@styrene-lab/pi-tui";
 import { beforeAll, describe, expect, test, vi } from "vitest";
 import { InteractiveMode, isVersionNewer } from "../src/modes/interactive/interactive-mode.js";
 import { initTheme } from "../src/modes/interactive/theme/theme.js";

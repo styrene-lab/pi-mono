@@ -15,16 +15,9 @@
 
 import { readFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
-import type {
-	Agent,
-	AgentEvent,
-	AgentMessage,
-	AgentState,
-	AgentTool,
-	ThinkingLevel,
-} from "@cwilson613/pi-agent-core";
-import type { AssistantMessage, ImageContent, Message, Model, TextContent } from "@cwilson613/pi-ai";
-import { isContextOverflow, modelsAreEqual, resetApiProviders, supportsXhigh } from "@cwilson613/pi-ai";
+import type { Agent, AgentEvent, AgentMessage, AgentState, AgentTool, ThinkingLevel } from "@styrene-lab/pi-agent-core";
+import type { AssistantMessage, ImageContent, Message, Model, TextContent } from "@styrene-lab/pi-ai";
+import { isContextOverflow, modelsAreEqual, resetApiProviders, supportsXhigh } from "@styrene-lab/pi-ai";
 import { getDocsPath } from "../config.js";
 import { theme } from "../modes/interactive/theme/theme.js";
 import { stripFrontmatter } from "../utils/frontmatter.js";

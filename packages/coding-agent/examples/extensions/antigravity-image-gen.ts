@@ -29,9 +29,9 @@ import { randomUUID } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { StringEnum } from "@cwilson613/pi-ai";
-import { type ExtensionAPI, getAgentDir } from "@cwilson613/pi-coding-agent";
 import { type Static, Type } from "@sinclair/typebox";
+import { StringEnum } from "@styrene-lab/pi-ai";
+import { type ExtensionAPI, getAgentDir } from "@styrene-lab/pi-coding-agent";
 
 const PROVIDER = "google-antigravity";
 

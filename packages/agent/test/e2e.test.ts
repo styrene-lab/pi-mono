@@ -1,5 +1,5 @@
-import type { AssistantMessage, Model, ToolResultMessage, UserMessage } from "@cwilson613/pi-ai";
-import { getModel } from "@cwilson613/pi-ai";
+import type { AssistantMessage, Model, ToolResultMessage, UserMessage } from "@styrene-lab/pi-ai";
+import { getModel } from "@styrene-lab/pi-ai";
 import { describe, expect, it } from "vitest";
 import { Agent } from "../src/index.js";
 import { hasBedrockCredentials } from "./bedrock-utils.js";

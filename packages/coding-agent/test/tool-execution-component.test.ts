@@ -1,5 +1,5 @@
-import { Text, type TUI } from "@cwilson613/pi-tui";
 import { Type } from "@sinclair/typebox";
+import { Text, type TUI } from "@styrene-lab/pi-tui";
 import stripAnsi from "strip-ansi";
 import { beforeAll, describe, expect, test } from "vitest";
 import type { ToolDefinition } from "../src/core/extensions/types.js";

@@ -9,7 +9,7 @@ import {
 	DefaultResourceLoader,
 	type PromptTemplate,
 	SessionManager,
-} from "@cwilson613/pi-coding-agent";
+} from "@styrene-lab/pi-coding-agent";
 
 // Define custom templates
 const deployTemplate: PromptTemplate = {

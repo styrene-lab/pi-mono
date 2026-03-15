@@ -1,5 +1,5 @@
-import type { AgentTool } from "@cwilson613/pi-agent-core";
 import { type Static, Type } from "@sinclair/typebox";
+import type { AgentTool } from "@styrene-lab/pi-agent-core";
 import { spawnSync } from "child_process";
 import { existsSync } from "fs";
 import { globSync } from "glob";

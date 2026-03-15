@@ -1,4 +1,4 @@
-import { fuzzyMatch } from "@cwilson613/pi-tui";
+import { fuzzyMatch } from "@styrene-lab/pi-tui";
 import type { SessionInfo } from "../../../core/session-manager.js";
 
 export type SortMode = "threaded" | "recent" | "relevance";

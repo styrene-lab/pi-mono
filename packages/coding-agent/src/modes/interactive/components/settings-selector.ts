@@ -1,5 +1,5 @@
-import type { ThinkingLevel } from "@cwilson613/pi-agent-core";
-import type { Transport } from "@cwilson613/pi-ai";
+import type { ThinkingLevel } from "@styrene-lab/pi-agent-core";
+import type { Transport } from "@styrene-lab/pi-ai";
 import {
 	Container,
 	getCapabilities,
@@ -10,7 +10,7 @@ import {
 	SettingsList,
 	Spacer,
 	Text,
-} from "@cwilson613/pi-tui";
+} from "@styrene-lab/pi-tui";
 import { getSelectListTheme, getSettingsListTheme, theme } from "../theme/theme.js";
 import { DynamicBorder } from "./dynamic-border.js";
 

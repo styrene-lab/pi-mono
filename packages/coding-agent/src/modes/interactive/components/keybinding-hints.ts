@@ -2,7 +2,7 @@
  * Utilities for formatting keybinding hints in the UI.
  */
 
-import { type EditorAction, getEditorKeybindings, type KeyId } from "@cwilson613/pi-tui";
+import { type EditorAction, getEditorKeybindings, type KeyId } from "@styrene-lab/pi-tui";
 import type { AppAction, KeybindingsManager } from "../../../core/keybindings.js";
 import { theme } from "../theme/theme.js";
 

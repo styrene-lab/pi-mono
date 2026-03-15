@@ -1,4 +1,4 @@
-import type { ExtensionAPI, ExtensionContext } from "@cwilson613/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@styrene-lab/pi-coding-agent";
 
 const COMPACT_THRESHOLD_TOKENS = 100_000;
 

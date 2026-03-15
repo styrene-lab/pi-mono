@@ -3,10 +3,10 @@
 	"compilerOptions": {
 		"noEmit": true,
 		"paths": {
-			"@cwilson613/pi-coding-agent": ["./src/index.ts"],
-			"@cwilson613/pi-coding-agent/hooks": ["./src/core/hooks/index.ts"],
-			"@cwilson613/pi-tui": ["../tui/src/index.ts"],
-			"@cwilson613/pi-ai": ["../ai/src/index.ts"],
+			"@styrene-lab/pi-coding-agent": ["./src/index.ts"],
+			"@styrene-lab/pi-coding-agent/hooks": ["./src/core/hooks/index.ts"],
+			"@styrene-lab/pi-tui": ["../tui/src/index.ts"],
+			"@styrene-lab/pi-ai": ["../ai/src/index.ts"],
 			"@sinclair/typebox": ["../../node_modules/@sinclair/typebox"]
 		},
 		"skipLibCheck": true

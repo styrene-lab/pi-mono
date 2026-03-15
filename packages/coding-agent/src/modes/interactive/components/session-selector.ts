@@ -13,7 +13,7 @@ import {
 	Text,
 	truncateToWidth,
 	visibleWidth,
-} from "@cwilson613/pi-tui";
+} from "@styrene-lab/pi-tui";
 import { KeybindingsManager } from "../../../core/keybindings.js";
 import type { SessionInfo, SessionListProgress } from "../../../core/session-manager.js";
 import { theme } from "../theme/theme.js";

@@ -22,7 +22,7 @@ import {
 	readOnlyTools,
 	readTool,
 	SessionManager,
-} from "@cwilson613/pi-coding-agent";
+} from "@styrene-lab/pi-coding-agent";
 
 // Read-only mode (no edit/write) - uses process.cwd()
 await createAgentSession({

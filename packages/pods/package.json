@@ -1,5 +1,5 @@
 {
-	"name": "@cwilson613/pi",
+	"name": "@styrene-lab/pi",
 	"version": "0.58.1",
 	"description": "CLI tool for managing vLLM deployments on GPU pods",
 	"type": "module",
@@ -33,7 +33,7 @@
 		"node": ">=20.0.0"
 	},
 	"dependencies": {
-		"@cwilson613/pi-agent-core": "file:../agent",
+		"@styrene-lab/pi-agent-core": "file:../agent",
 		"chalk": "^5.5.0"
 	},
 	"devDependencies": {}

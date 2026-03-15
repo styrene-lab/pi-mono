@@ -42,8 +42,8 @@ import {
 	type Tool,
 	type ToolCall,
 	type ToolResultMessage,
-} from "@cwilson613/pi-ai";
-import type { ExtensionAPI } from "@cwilson613/pi-coding-agent";
+} from "@styrene-lab/pi-ai";
+import type { ExtensionAPI } from "@styrene-lab/pi-coding-agent";
 
 // =============================================================================
 // OAuth Implementation (copied from packages/ai/src/utils/oauth/anthropic.ts)

@@ -1,4 +1,4 @@
-import type { Model } from "@cwilson613/pi-ai";
+import type { Model } from "@styrene-lab/pi-ai";
 import {
 	Container,
 	type Focusable,
@@ -9,7 +9,7 @@ import {
 	matchesKey,
 	Spacer,
 	Text,
-} from "@cwilson613/pi-tui";
+} from "@styrene-lab/pi-tui";
 import { theme } from "../theme/theme.js";
 import { DynamicBorder } from "./dynamic-border.js";
 

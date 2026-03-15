@@ -5,8 +5,8 @@
  * Responses and events are emitted as JSON lines on stdout.
  */
 
-import type { AgentMessage, ThinkingLevel } from "@cwilson613/pi-agent-core";
-import type { ImageContent, Model } from "@cwilson613/pi-ai";
+import type { AgentMessage, ThinkingLevel } from "@styrene-lab/pi-agent-core";
+import type { ImageContent, Model } from "@styrene-lab/pi-ai";
 import type { SessionStats } from "../../core/agent-session.js";
 import type { BashResult } from "../../core/bash-executor.js";
 import type { CompactionResult } from "../../core/compaction/index.js";

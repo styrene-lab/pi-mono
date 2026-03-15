@@ -1,5 +1,5 @@
 {
-	"name": "@cwilson613/pi-agent-core",
+	"name": "@styrene-lab/pi-agent-core",
 	"version": "0.58.1",
 	"description": "General-purpose agent with transport abstraction, state management, and attachment support",
 	"type": "module",
@@ -17,7 +17,7 @@
 		"prepublishOnly": "npm run clean && npm run build"
 	},
 	"dependencies": {
-		"@cwilson613/pi-ai": "file:../ai"
+		"@styrene-lab/pi-ai": "file:../ai"
 	},
 	"keywords": [
 		"ai",

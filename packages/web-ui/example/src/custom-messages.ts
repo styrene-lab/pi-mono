@@ -1,7 +1,7 @@
 import { Alert } from "@mariozechner/mini-lit/dist/Alert.js";
-import type { Message } from "@cwilson613/pi-ai";
-import type { AgentMessage, MessageRenderer } from "@cwilson613/pi-web-ui";
-import { defaultConvertToLlm, registerMessageRenderer } from "@cwilson613/pi-web-ui";
+import type { Message } from "@styrene-lab/pi-ai";
+import type { AgentMessage, MessageRenderer } from "@styrene-lab/pi-web-ui";
+import { defaultConvertToLlm, registerMessageRenderer } from "@styrene-lab/pi-web-ui";
 import { html } from "lit";
 
 // ============================================================================
@@ -18,7 +18,7 @@ export interface SystemNotificationMessage {
 
 // Extend CustomAgentMessages interface via declaration merging
 // This must target pi-agent-core where CustomAgentMessages is defined
-declare module "@cwilson613/pi-agent-core" {
+declare module "@styrene-lab/pi-agent-core" {
 	interface CustomAgentMessages {
 		"system-notification": SystemNotificationMessage;
 	}

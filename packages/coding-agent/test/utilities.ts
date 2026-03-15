@@ -5,9 +5,9 @@
 import { chmodSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { homedir, tmpdir } from "node:os";
 import { dirname, join } from "node:path";
-import { Agent } from "@cwilson613/pi-agent-core";
-import { getModel, type OAuthCredentials, type OAuthProvider } from "@cwilson613/pi-ai";
-import { getOAuthApiKey } from "@cwilson613/pi-ai/oauth";
+import { Agent } from "@styrene-lab/pi-agent-core";
+import { getModel, type OAuthCredentials, type OAuthProvider } from "@styrene-lab/pi-ai";
+import { getOAuthApiKey } from "@styrene-lab/pi-ai/oauth";
 import { AgentSession } from "../src/core/agent-session.js";
 import { AuthStorage } from "../src/core/auth-storage.js";
 import { createExtensionRuntime } from "../src/core/extensions/loader.js";

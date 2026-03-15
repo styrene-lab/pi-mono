@@ -1,6 +1,6 @@
-import type { TextContent } from "@cwilson613/pi-ai";
-import type { Component } from "@cwilson613/pi-tui";
-import { Box, Container, Markdown, type MarkdownTheme, Spacer, Text } from "@cwilson613/pi-tui";
+import type { TextContent } from "@styrene-lab/pi-ai";
+import type { Component } from "@styrene-lab/pi-tui";
+import { Box, Container, Markdown, type MarkdownTheme, Spacer, Text } from "@styrene-lab/pi-tui";
 import type { MessageRenderer } from "../../../core/extensions/types.js";
 import type { CustomMessage } from "../../../core/messages.js";
 import { getMarkdownTheme, theme } from "../theme/theme.js";

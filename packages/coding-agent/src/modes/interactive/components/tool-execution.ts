@@ -10,7 +10,7 @@ import {
 	Text,
 	type TUI,
 	truncateToWidth,
-} from "@cwilson613/pi-tui";
+} from "@styrene-lab/pi-tui";
 import stripAnsi from "strip-ansi";
 import type { ToolDefinition } from "../../../core/extensions/types.js";
 import { computeEditDiff, type EditDiffError, type EditDiffResult } from "../../../core/tools/edit-diff.js";
@@ -28,10 +28,41 @@ const BASH_PREVIEW_LINES = 5;
 
 // Shell builtins and common top-level commands to highlight as keywords
 const SHELL_KEYWORDS = new Set([
-	"cd", "export", "unset", "source", ".", "exec", "eval", "echo", "printf",
-	"read", "set", "shift", "return", "if", "then", "else", "elif", "fi",
-	"for", "do", "done", "while", "until", "case", "esac", "function",
-	"exit", "kill", "wait", "trap", "jobs", "fg", "bg", "true", "false",
+	"cd",
+	"export",
+	"unset",
+	"source",
+	".",
+	"exec",
+	"eval",
+	"echo",
+	"printf",
+	"read",
+	"set",
+	"shift",
+	"return",
+	"if",
+	"then",
+	"else",
+	"elif",
+	"fi",
+	"for",
+	"do",
+	"done",
+	"while",
+	"until",
+	"case",
+	"esac",
+	"function",
+	"exit",
+	"kill",
+	"wait",
+	"trap",
+	"jobs",
+	"fg",
+	"bg",
+	"true",
+	"false",
 ]);
 
 /**
@@ -378,7 +409,8 @@ export class ToolExecutionComponent extends Container {
 		this.isPartial = isPartial;
 		// Capture duration when result first arrives (not on partial updates)
 		if (!isPartial && this.execDurationMs === undefined) {
-			this.execDurationMs = result.details?.durationMs ??
+			this.execDurationMs =
+				result.details?.durationMs ??
 				(this.execStartTime !== undefined ? Date.now() - this.execStartTime : undefined);
 		}
 		if (this.toolName === "write" && !isPartial) {
@@ -651,7 +683,6 @@ export class ToolExecutionComponent extends Container {
 
 			this.contentBox.addChild(new Text(metaParts, 0, 0));
 		}
-
 
 		if (this.result) {
 			const output = this.getTextOutput().trim();

@@ -11,8 +11,8 @@ import {
 	type OAuthCredentials,
 	type OAuthLoginCallbacks,
 	type OAuthProviderId,
-} from "@cwilson613/pi-ai";
-import { getOAuthApiKey, getOAuthProvider, getOAuthProviders } from "@cwilson613/pi-ai/oauth";
+} from "@styrene-lab/pi-ai";
+import { getOAuthApiKey, getOAuthProvider, getOAuthProviders } from "@styrene-lab/pi-ai/oauth";
 import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { dirname, join } from "path";
 import lockfile from "proper-lockfile";

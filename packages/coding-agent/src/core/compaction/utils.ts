@@ -2,8 +2,8 @@
  * Shared utilities for compaction and branch summarization.
  */
 
-import type { AgentMessage } from "@cwilson613/pi-agent-core";
-import type { Message } from "@cwilson613/pi-ai";
+import type { AgentMessage } from "@styrene-lab/pi-agent-core";
+import type { Message } from "@styrene-lab/pi-ai";
 
 // ============================================================================
 // File Operation Tracking

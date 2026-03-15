@@ -1,7 +1,7 @@
 {
-	"name": "@cwilson613/pi-web-ui",
+	"name": "@styrene-lab/pi-web-ui",
 	"version": "0.58.1",
-	"description": "Reusable web UI components for AI chat interfaces powered by @cwilson613/pi-ai",
+	"description": "Reusable web UI components for AI chat interfaces powered by @styrene-lab/pi-ai",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -18,8 +18,8 @@
 	},
 	"dependencies": {
 		"@lmstudio/sdk": "^1.5.0",
-		"@cwilson613/pi-ai": "file:../ai",
-		"@cwilson613/pi-tui": "file:../tui",
+		"@styrene-lab/pi-ai": "file:../ai",
+		"@styrene-lab/pi-tui": "file:../tui",
 		"docx-preview": "^0.3.7",
 		"jszip": "^3.10.1",
 		"lucide": "^0.544.0",

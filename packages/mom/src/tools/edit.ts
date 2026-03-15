@@ -1,5 +1,5 @@
-import type { AgentTool } from "@cwilson613/pi-agent-core";
 import { Type } from "@sinclair/typebox";
+import type { AgentTool } from "@styrene-lab/pi-agent-core";
 import * as Diff from "diff";
 import type { Executor } from "../sandbox.js";
 

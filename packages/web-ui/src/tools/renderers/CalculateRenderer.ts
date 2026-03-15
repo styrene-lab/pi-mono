@@ -1,4 +1,4 @@
-import type { ToolResultMessage } from "@cwilson613/pi-ai";
+import type { ToolResultMessage } from "@styrene-lab/pi-ai";
 import { html } from "lit";
 import { Calculator } from "lucide";
 import { i18n } from "../../utils/i18n.js";

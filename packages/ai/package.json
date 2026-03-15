@@ -1,5 +1,5 @@
 {
-	"name": "@cwilson613/pi-ai",
+	"name": "@styrene-lab/pi-ai",
 	"version": "0.58.1-cwilson613.1",
 	"description": "Unified LLM API with automatic model discovery and provider configuration",
 	"type": "module",

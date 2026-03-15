@@ -13,9 +13,9 @@
  *   pi --extension examples/extensions/custom-compaction.ts
  */
 
-import { complete } from "@cwilson613/pi-ai";
-import type { ExtensionAPI } from "@cwilson613/pi-coding-agent";
-import { convertToLlm, serializeConversation } from "@cwilson613/pi-coding-agent";
+import { complete } from "@styrene-lab/pi-ai";
+import type { ExtensionAPI } from "@styrene-lab/pi-coding-agent";
+import { convertToLlm, serializeConversation } from "@styrene-lab/pi-coding-agent";
 
 export default function (pi: ExtensionAPI) {
 	pi.on("session_before_compact", async (event, ctx) => {

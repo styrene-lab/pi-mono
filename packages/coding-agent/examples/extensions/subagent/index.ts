@@ -16,12 +16,12 @@ import { spawn } from "node:child_process";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentToolResult } from "@cwilson613/pi-agent-core";
-import type { Message } from "@cwilson613/pi-ai";
-import { StringEnum } from "@cwilson613/pi-ai";
-import { type ExtensionAPI, getMarkdownTheme } from "@cwilson613/pi-coding-agent";
-import { Container, Markdown, Spacer, Text } from "@cwilson613/pi-tui";
 import { Type } from "@sinclair/typebox";
+import type { AgentToolResult } from "@styrene-lab/pi-agent-core";
+import type { Message } from "@styrene-lab/pi-ai";
+import { StringEnum } from "@styrene-lab/pi-ai";
+import { type ExtensionAPI, getMarkdownTheme } from "@styrene-lab/pi-coding-agent";
+import { Container, Markdown, Spacer, Text } from "@styrene-lab/pi-tui";
 import { type AgentConfig, type AgentScope, discoverAgents } from "./agents.js";
 
 const MAX_PARALLEL_TASKS = 8;

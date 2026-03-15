@@ -684,11 +684,7 @@ function normalizeToolCallId(id: string): string {
 function lastUserMessageWithImageIndex(messages: Message[]): number {
 	for (let i = messages.length - 1; i >= 0; i--) {
 		const msg = messages[i];
-		if (
-			msg.role === "user" &&
-			Array.isArray(msg.content) &&
-			msg.content.some((c) => c.type === "image")
-		) {
+		if (msg.role === "user" && Array.isArray(msg.content) && msg.content.some((c) => c.type === "image")) {
 			return i;
 		}
 	}
@@ -739,11 +735,7 @@ function convertMessages(
 							type: "image" as const,
 							source: {
 								type: "base64" as const,
-								media_type: item.mimeType as
-									| "image/jpeg"
-									| "image/png"
-									| "image/gif"
-									| "image/webp",
+								media_type: item.mimeType as "image/jpeg" | "image/png" | "image/gif" | "image/webp",
 								data: item.data,
 							},
 						});

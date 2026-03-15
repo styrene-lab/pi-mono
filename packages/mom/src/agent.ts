@@ -1,5 +1,5 @@
-import { Agent, type AgentEvent } from "@cwilson613/pi-agent-core";
-import { getModel, type ImageContent } from "@cwilson613/pi-ai";
+import { Agent, type AgentEvent } from "@styrene-lab/pi-agent-core";
+import { getModel, type ImageContent } from "@styrene-lab/pi-ai";
 import {
 	AgentSession,
 	AuthStorage,
@@ -11,7 +11,7 @@ import {
 	type ResourceLoader,
 	SessionManager,
 	type Skill,
-} from "@cwilson613/pi-coding-agent";
+} from "@styrene-lab/pi-coding-agent";
 import { existsSync, readFileSync } from "fs";
 import { mkdir, writeFile } from "fs/promises";
 import { homedir } from "os";

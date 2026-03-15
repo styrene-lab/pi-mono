@@ -1,5 +1,5 @@
-import { Agent, type ThinkingLevel } from "@cwilson613/pi-agent-core";
-import { getModel } from "@cwilson613/pi-ai";
+import { Agent, type ThinkingLevel } from "@styrene-lab/pi-agent-core";
+import { getModel } from "@styrene-lab/pi-ai";
 import { describe, expect, it } from "vitest";
 import { AgentSession } from "../src/core/agent-session.js";
 import { AuthStorage } from "../src/core/auth-storage.js";

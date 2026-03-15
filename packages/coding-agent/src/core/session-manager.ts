@@ -1,5 +1,5 @@
-import type { AgentMessage } from "@cwilson613/pi-agent-core";
-import type { ImageContent, Message, TextContent } from "@cwilson613/pi-ai";
+import type { AgentMessage } from "@styrene-lab/pi-agent-core";
+import type { ImageContent, Message, TextContent } from "@styrene-lab/pi-ai";
 import { randomUUID } from "crypto";
 import {
 	appendFileSync,
