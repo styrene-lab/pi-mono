@@ -64,6 +64,7 @@ import type { TruncationResult } from "../../core/tools/truncate.js";
 import { getChangelogPath, getNewEntries, parseChangelog } from "../../utils/changelog.js";
 import { copyToClipboard } from "../../utils/clipboard.js";
 import { extensionForImageMimeType, readClipboardImage } from "../../utils/clipboard-image.js";
+import { clipboardModuleName } from "../../utils/clipboard-native.js";
 import { ensureTool } from "../../utils/tools-manager.js";
 import { ArminComponent } from "./components/armin.js";
 import { AssistantMessageComponent } from "./components/assistant-message.js";
@@ -1949,6 +1950,8 @@ export class InteractiveMode {
 		try {
 			const image = await readClipboardImage();
 			if (!image) {
+				const moduleNote = clipboardModuleName ? ` (${clipboardModuleName})` : "";
+				this.showStatus(`No clipboard image available${moduleNote}`);
 				return;
 			}
 
@@ -1961,9 +1964,11 @@ export class InteractiveMode {
 
 			// Insert file path directly
 			this.editor.insertTextAtCursor?.(filePath);
+			this.showStatus(`Pasted clipboard image → ${path.basename(filePath)}`);
 			this.ui.requestRender();
-		} catch {
-			// Silently ignore clipboard errors (may not have permission, etc.)
+		} catch (error) {
+			const detail = error instanceof Error ? error.message : String(error);
+			this.showWarning(`Clipboard image paste failed${detail ? `: ${detail}` : ""}`);
 		}
 	}
 
