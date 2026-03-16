@@ -155,6 +155,12 @@ export class ProcessTerminal implements Terminal {
 					this._kittyProtocolActive = true;
 					setKittyProtocolActive(true);
 
+					// Tell StdinBuffer to hold incomplete escape sequences rather
+					// than flushing them on the 10ms timeout.  Kitty CSI-u sequences
+					// can arrive split across stdin chunks; flushing mid-sequence
+					// drops keypresses or leaks fragment bytes into the editor.
+					this.stdinBuffer!.setHoldIncompleteEscapes(true);
+
 					// Enable Kitty keyboard protocol (push flags)
 					// Flag 1 = disambiguate escape codes
 					// Flag 2 = report event types (press/repeat/release)

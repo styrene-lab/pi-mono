@@ -1,5 +1,5 @@
 import { getEditorKeybindings } from "../keybindings.js";
-import { decodeKittyPrintable, looksLikePartialEscapeSequence } from "../keys.js";
+import { decodeKittyPrintable, looksLikeCsiFragment, looksLikePartialEscapeSequence } from "../keys.js";
 import { KillRing } from "../kill-ring.js";
 import { type Component, CURSOR_MARKER, type Focusable } from "../tui.js";
 import { UndoStack } from "../undo-stack.js";
@@ -232,6 +232,10 @@ export class Input implements Component, Focusable {
 		// but reject control characters (C0: 0x00-0x1F, DEL: 0x7F, C1: 0x80-0x9F)
 		// and partial escape sequences split off by stdin buffering
 		if (looksLikePartialEscapeSequence(data)) return;
+		// Reject fragments of Kitty CSI-u sequences that leaked through stdin
+		// buffer splitting.  These look like bare digits/semicolons/colons ending
+		// in 'u' or '~' (e.g. "97;1:1u" from a split \x1b[97;1:1u).
+		if (looksLikeCsiFragment(data)) return;
 		const hasControlChars = [...data].some((ch) => {
 			const code = ch.charCodeAt(0);
 			return code < 32 || code === 0x7f || (code >= 0x80 && code <= 0x9f);

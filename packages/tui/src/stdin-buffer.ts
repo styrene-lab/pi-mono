@@ -229,6 +229,16 @@ export type StdinBufferOptions = {
 	 * After this time, the buffer is flushed even if incomplete
 	 */
 	timeout?: number;
+
+	/**
+	 * When true, incomplete escape sequences are held indefinitely
+	 * (no timeout flush) because Kitty CSI-u sequences can arrive
+	 * split across chunks with >10ms gaps. Only the next chunk of
+	 * real data will complete or displace them. The timeout still
+	 * applies to truly orphaned bytes (lone ESC = escape key press
+	 * in legacy mode).
+	 */
+	holdIncompleteEscapes?: boolean;
 };
 
 export type StdinBufferEventMap = {
@@ -246,10 +256,19 @@ export class StdinBuffer extends EventEmitter<StdinBufferEventMap> {
 	private readonly timeoutMs: number;
 	private pasteMode: boolean = false;
 	private pasteBuffer: string = "";
+	private holdIncompleteEscapes: boolean;
 
 	constructor(options: StdinBufferOptions = {}) {
 		super();
 		this.timeoutMs = options.timeout ?? 10;
+		this.holdIncompleteEscapes = options.holdIncompleteEscapes ?? false;
+	}
+
+	/**
+	 * Enable holding incomplete escape sequences (call after Kitty protocol is detected).
+	 */
+	public setHoldIncompleteEscapes(hold: boolean): void {
+		this.holdIncompleteEscapes = hold;
 	}
 
 	public process(data: string | Buffer): void {
@@ -341,13 +360,26 @@ export class StdinBuffer extends EventEmitter<StdinBufferEventMap> {
 		}
 
 		if (this.buffer.length > 0) {
+			// When Kitty protocol is active and the buffer holds an incomplete
+			// escape sequence (starts with ESC), don't flush on timeout.
+			// Kitty CSI-u sequences can arrive split across stdin chunks with
+			// >10ms gaps due to system load or USB keyboard latency.  Flushing
+			// mid-sequence drops the keypress or leaks fragment bytes as text.
+			// The next stdin chunk will either complete the sequence or displace it.
+			//
+			// We still use a longer safety timeout (200ms) to avoid holding
+			// orphaned bytes forever if the terminal sends a truly incomplete
+			// sequence (e.g., during protocol negotiation).
+			const isIncompleteEscape = this.holdIncompleteEscapes && this.buffer.startsWith(ESC);
+			const flushDelay = isIncompleteEscape ? 200 : this.timeoutMs;
+
 			this.timeout = setTimeout(() => {
 				const flushed = this.flush();
 
 				for (const sequence of flushed) {
 					this.emit("data", sequence);
 				}
-			}, this.timeoutMs);
+			}, flushDelay);
 		}
 	}
 

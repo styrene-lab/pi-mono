@@ -1290,3 +1290,20 @@ export function looksLikePartialEscapeSequence(data: string): boolean {
 	if (data.startsWith("O") && PARTIAL_SS3_REGEX.test(data)) return true;
 	return false;
 }
+
+/**
+ * Detect fragments of Kitty CSI-u or functional-key sequences that leaked
+ * through stdin buffer splitting — the tail end after the ESC[ prefix was
+ * already flushed separately.
+ *
+ * These look like bare digit/semicolon/colon strings ending in a CSI final
+ * byte (u, ~, or A-Z), e.g. "97;1:1u" from a split \x1b[97;1:1u.
+ * Normal user input never contains semicolons or colons mixed with a
+ * trailing 'u' or '~', so false positives are negligible.
+ */
+const CSI_FRAGMENT_REGEX = /^[\d;:]+[A-Za-z~]$/;
+
+export function looksLikeCsiFragment(data: string): boolean {
+	if (data.length < 2) return false;
+	return CSI_FRAGMENT_REGEX.test(data);
+}

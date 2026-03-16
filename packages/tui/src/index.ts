@@ -42,13 +42,14 @@ export {
 // Keyboard input handling
 export {
 	decodeKittyPrintable,
-	looksLikePartialEscapeSequence,
 	isKeyRelease,
 	isKeyRepeat,
 	isKittyProtocolActive,
 	Key,
 	type KeyEventType,
 	type KeyId,
+	looksLikeCsiFragment,
+	looksLikePartialEscapeSequence,
 	matchesKey,
 	parseKey,
 	setKittyProtocolActive,
