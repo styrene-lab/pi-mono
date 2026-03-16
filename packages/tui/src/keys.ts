@@ -1267,3 +1267,26 @@ export function decodeKittyPrintable(data: string): string | undefined {
 		return undefined;
 	}
 }
+
+// =============================================================================
+// Partial Escape Sequence Detection
+// =============================================================================
+
+/**
+ * Detect data that looks like a partial escape sequence — the tail end of a
+ * CSI/OSC/SS3 sequence whose leading ESC byte was split off by stdin buffering.
+ *
+ * When the StdinBuffer's 10ms timeout fires between the ESC byte and the rest
+ * of a sequence, the ESC is flushed alone (rejected as control char) and then
+ * the remaining bytes (e.g. "[97;1:1u") arrive as a separate event. Without
+ * this guard, the editor/input components would insert the raw sequence text.
+ */
+const PARTIAL_CSI_REGEX = /^\[[\d;:<>=?]*[A-Za-z~u]$/;
+const PARTIAL_SS3_REGEX = /^O[A-Za-z]$/;
+
+export function looksLikePartialEscapeSequence(data: string): boolean {
+	if (data.length < 2) return false;
+	if (data.startsWith("[") && PARTIAL_CSI_REGEX.test(data)) return true;
+	if (data.startsWith("O") && PARTIAL_SS3_REGEX.test(data)) return true;
+	return false;
+}

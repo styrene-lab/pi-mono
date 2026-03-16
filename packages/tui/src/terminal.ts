@@ -61,6 +61,7 @@ export class ProcessTerminal implements Terminal {
 	private stdinBuffer?: StdinBuffer;
 	private stdinDataHandler?: (data: string) => void;
 	private writeLogPath = process.env.PI_TUI_WRITE_LOG || "";
+	private sigcontHandler?: () => void;
 
 	get kittyProtocolActive(): boolean {
 		return this._kittyProtocolActive;
@@ -100,6 +101,35 @@ export class ProcessTerminal implements Terminal {
 		// The query handler intercepts input temporarily, then installs the user's handler
 		// See: https://sw.kovidgoyal.net/kitty/keyboard-protocol/
 		this.queryAndEnableKittyProtocol();
+
+		// Re-push terminal protocol state after SIGCONT (suspend/resume).
+		// Terminal resets (e.g. `reset` command, Kitty Ctrl+Shift+Delete) clear
+		// the kitty keyboard protocol push stack and bracketed paste mode, but
+		// the process keeps running with stale flags. Re-push everything.
+		if (process.platform !== "win32") {
+			this.sigcontHandler = () => {
+				// Re-enable raw mode (terminal reset restores cooked mode)
+				if (process.stdin.setRawMode) {
+					process.stdin.setRawMode(true);
+				}
+				process.stdin.resume();
+				// Re-enable bracketed paste
+				process.stdout.write("\x1b[?2004h");
+				// Re-push kitty keyboard protocol if it was active
+				if (this._kittyProtocolActive) {
+					process.stdout.write("\x1b[>7u");
+				} else if (this._modifyOtherKeysActive) {
+					process.stdout.write("\x1b[>4;2m");
+				} else {
+					// Protocol wasn't established yet — re-query
+					this._kittyProtocolActive = false;
+					this._modifyOtherKeysActive = false;
+					setKittyProtocolActive(false);
+					this.queryAndEnableKittyProtocol();
+				}
+			};
+			process.on("SIGCONT", this.sigcontHandler);
+		}
 	}
 
 	/**
@@ -276,6 +306,10 @@ export class ProcessTerminal implements Terminal {
 		if (this.resizeHandler) {
 			process.stdout.removeListener("resize", this.resizeHandler);
 			this.resizeHandler = undefined;
+		}
+		if (this.sigcontHandler) {
+			process.removeListener("SIGCONT", this.sigcontHandler);
+			this.sigcontHandler = undefined;
 		}
 
 		// Pause stdin to prevent any buffered input (e.g., Ctrl+D) from being

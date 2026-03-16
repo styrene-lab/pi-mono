@@ -1,6 +1,6 @@
 import type { AutocompleteProvider, CombinedAutocompleteProvider } from "../autocomplete.js";
 import { getEditorKeybindings } from "../keybindings.js";
-import { decodeKittyPrintable, matchesKey } from "../keys.js";
+import { decodeKittyPrintable, looksLikePartialEscapeSequence, matchesKey } from "../keys.js";
 import { KillRing } from "../kill-ring.js";
 import { type Component, CURSOR_MARKER, type Focusable, type TUI } from "../tui.js";
 import { UndoStack } from "../undo-stack.js";
@@ -804,8 +804,9 @@ export class Editor implements Component, Focusable {
 			return;
 		}
 
-		// Regular characters
-		if (data.charCodeAt(0) >= 32) {
+		// Regular characters — but reject anything that looks like a partial
+		// escape sequence (e.g. "[97;1u" when ESC was split off by stdin buffering)
+		if (data.charCodeAt(0) >= 32 && !looksLikePartialEscapeSequence(data)) {
 			this.insertCharacter(data);
 		}
 	}
