@@ -251,7 +251,6 @@ export async function loginAnthropic(options: {
 
 	let code: string | undefined;
 	let state: string | undefined;
-	let redirectUriForExchange = REDIRECT_URI;
 
 	try {
 		const authParams = new URLSearchParams({
@@ -294,7 +293,6 @@ export async function loginAnthropic(options: {
 			if (result?.code) {
 				code = result.code;
 				state = result.state;
-				redirectUriForExchange = REDIRECT_URI;
 			} else if (manualInput) {
 				const parsed = parseAuthorizationInput(manualInput);
 				if (parsed.state && parsed.state !== verifier) {
@@ -302,7 +300,6 @@ export async function loginAnthropic(options: {
 				}
 				code = parsed.code;
 				state = parsed.state ?? verifier;
-				redirectUriForExchange = MANUAL_REDIRECT_URI;
 			}
 
 			if (!code) {
@@ -317,7 +314,6 @@ export async function loginAnthropic(options: {
 					}
 					code = parsed.code;
 					state = parsed.state ?? verifier;
-					redirectUriForExchange = MANUAL_REDIRECT_URI;
 				}
 			}
 		} else {
@@ -325,7 +321,6 @@ export async function loginAnthropic(options: {
 			if (result?.code) {
 				code = result.code;
 				state = result.state;
-				redirectUriForExchange = REDIRECT_URI;
 			}
 		}
 
@@ -340,7 +335,6 @@ export async function loginAnthropic(options: {
 			}
 			code = parsed.code;
 			state = parsed.state ?? verifier;
-			redirectUriForExchange = MANUAL_REDIRECT_URI;
 		}
 
 		if (!code) {
@@ -352,7 +346,9 @@ export async function loginAnthropic(options: {
 		}
 
 		options.onProgress?.("Exchanging authorization code for tokens...");
-		return exchangeAuthorizationCode(code, state, verifier, redirectUriForExchange);
+		// Always use REDIRECT_URI — the authorization request uses it, and
+		// OAuth requires exact redirect_uri match in the token exchange.
+		return exchangeAuthorizationCode(code, state, verifier, REDIRECT_URI);
 	} finally {
 		server.server.close();
 	}
