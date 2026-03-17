@@ -9,6 +9,8 @@ export class Text implements Component {
 	private paddingX: number; // Left/right padding
 	private paddingY: number; // Top/bottom padding
 	private customBgFn?: (text: string) => string;
+	private borderFn?: (glyph: string) => string;
+	private borderGlyph = "▎";
 
 	// Cache for rendered output
 	private cachedText?: string;
@@ -20,6 +22,18 @@ export class Text implements Component {
 		this.paddingX = paddingX;
 		this.paddingY = paddingY;
 		this.customBgFn = customBgFn;
+	}
+
+	/**
+	 * Set a left-border color function. When set, each line is prefixed with
+	 * a thin vertical bar in the given color. Pass undefined to remove.
+	 */
+	setBorderFn(fn?: (glyph: string) => string, glyph?: string): void {
+		this.borderFn = fn;
+		if (glyph !== undefined) this.borderGlyph = glyph;
+		this.cachedText = undefined;
+		this.cachedWidth = undefined;
+		this.cachedLines = undefined;
 	}
 
 	setText(text: string): void {
@@ -60,8 +74,10 @@ export class Text implements Component {
 		// Replace tabs with 3 spaces
 		const normalizedText = this.text.replace(/\t/g, "   ");
 
-		// Calculate content width (subtract left/right margins)
-		const contentWidth = Math.max(1, width - this.paddingX * 2);
+		// Calculate content width (subtract left/right margins and optional border)
+		const hasBorder = !!this.borderFn;
+		const borderWidth = hasBorder ? 1 : 0;
+		const contentWidth = Math.max(1, width - this.paddingX * 2 - borderWidth);
 
 		// Wrap text (this preserves ANSI codes but does NOT pad)
 		const wrappedLines = wrapTextWithAnsi(normalizedText, contentWidth);
@@ -71,27 +87,30 @@ export class Text implements Component {
 		const rightMargin = " ".repeat(this.paddingX);
 		const contentLines: string[] = [];
 
+		const borderStr = hasBorder ? this.borderFn!(this.borderGlyph) : "";
+		const innerWidth = hasBorder ? width - 1 : width;
+
 		for (const line of wrappedLines) {
 			// Add margins
 			const lineWithMargins = leftMargin + line + rightMargin;
 
 			// Apply background if specified (this also pads to full width)
 			if (this.customBgFn) {
-				contentLines.push(applyBackgroundToLine(lineWithMargins, width, this.customBgFn));
+				contentLines.push(borderStr + applyBackgroundToLine(lineWithMargins, innerWidth, this.customBgFn));
 			} else {
 				// No background - just pad to width with spaces
 				const visibleLen = visibleWidth(lineWithMargins);
-				const paddingNeeded = Math.max(0, width - visibleLen);
-				contentLines.push(lineWithMargins + " ".repeat(paddingNeeded));
+				const paddingNeeded = Math.max(0, innerWidth - visibleLen);
+				contentLines.push(borderStr + lineWithMargins + " ".repeat(paddingNeeded));
 			}
 		}
 
 		// Add top/bottom padding (empty lines)
-		const emptyLine = " ".repeat(width);
+		const emptyLine = " ".repeat(innerWidth);
 		const emptyLines: string[] = [];
 		for (let i = 0; i < this.paddingY; i++) {
-			const line = this.customBgFn ? applyBackgroundToLine(emptyLine, width, this.customBgFn) : emptyLine;
-			emptyLines.push(line);
+			const line = this.customBgFn ? applyBackgroundToLine(emptyLine, innerWidth, this.customBgFn) : emptyLine;
+			emptyLines.push(borderStr + line);
 		}
 
 		const result = [...emptyLines, ...contentLines, ...emptyLines];

@@ -9,13 +9,16 @@ type RenderCache = {
 };
 
 /**
- * Box component - a container that applies padding and background to all children
+ * Box component - a container that applies padding and background to all children.
+ * Optionally renders a left-border accent bar for visual identity.
  */
 export class Box implements Component {
 	children: Component[] = [];
 	private paddingX: number;
 	private paddingY: number;
 	private bgFn?: (text: string) => string;
+	private borderFn?: (glyph: string) => string;
+	private borderGlyph = "▎";
 
 	// Cache for rendered output
 	private cache?: RenderCache;
@@ -24,6 +27,16 @@ export class Box implements Component {
 		this.paddingX = paddingX;
 		this.paddingY = paddingY;
 		this.bgFn = bgFn;
+	}
+
+	/**
+	 * Set a left-border color function. When set, each line is prefixed with
+	 * a thin vertical bar in the given color. Pass undefined to remove.
+	 */
+	setBorderFn(fn?: (glyph: string) => string, glyph?: string): void {
+		this.borderFn = fn;
+		if (glyph !== undefined) this.borderGlyph = glyph;
+		this.invalidateCache();
 	}
 
 	addChild(component: Component): void {
@@ -76,7 +89,9 @@ export class Box implements Component {
 			return [];
 		}
 
-		const contentWidth = Math.max(1, width - this.paddingX * 2);
+		const hasBorder = !!this.borderFn;
+		const borderWidth = hasBorder ? 1 : 0;
+		const contentWidth = Math.max(1, width - this.paddingX * 2 - borderWidth);
 		const leftPad = " ".repeat(this.paddingX);
 
 		// Render all children
@@ -125,13 +140,17 @@ export class Box implements Component {
 	}
 
 	private applyBg(line: string, width: number): string {
+		const hasBorder = !!this.borderFn;
+		const borderStr = hasBorder ? this.borderFn!(this.borderGlyph) : "";
+		const innerWidth = hasBorder ? width - 1 : width;
+
 		const visLen = visibleWidth(line);
-		const padNeeded = Math.max(0, width - visLen);
+		const padNeeded = Math.max(0, innerWidth - visLen);
 		const padded = line + " ".repeat(padNeeded);
 
 		if (this.bgFn) {
-			return applyBackgroundToLine(padded, width, this.bgFn);
+			return borderStr + applyBackgroundToLine(padded, innerWidth, this.bgFn);
 		}
-		return padded;
+		return borderStr + padded;
 	}
 }

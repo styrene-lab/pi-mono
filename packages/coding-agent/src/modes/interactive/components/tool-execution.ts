@@ -479,12 +479,18 @@ export class ToolExecutionComponent extends Container {
 	}
 
 	private updateDisplay(): void {
-		// Set background based on state
+		// Set background and left-border based on state
 		const bgFn = this.isPartial
 			? (text: string) => theme.bg("toolPendingBg", text)
 			: this.result?.isError
 				? (text: string) => theme.bg("toolErrorBg", text)
 				: (text: string) => theme.bg("toolSuccessBg", text);
+
+		const borderFn: ((g: string) => string) | undefined = this.isPartial
+			? (g: string) => theme.fg("borderMuted", g)
+			: this.result?.isError
+				? (g: string) => theme.fg("error", g)
+				: (g: string) => theme.fg("accent", g);
 
 		const useBuiltInRenderer = this.shouldUseBuiltInRenderer();
 		let customRendererHasContent = false;
@@ -495,16 +501,19 @@ export class ToolExecutionComponent extends Container {
 			if (this.toolName === "bash") {
 				// Bash uses Box with visual line truncation
 				this.contentBox.setBgFn(bgFn);
+				this.contentBox.setBorderFn(borderFn);
 				this.contentBox.clear();
 				this.renderBashContent();
 			} else {
 				// Other built-in tools: use Text directly with caching
 				this.contentText.setCustomBgFn(bgFn);
+				this.contentText.setBorderFn(borderFn);
 				this.contentText.setText(this.formatToolExecution());
 			}
 		} else if (this.toolDefinition) {
 			// Custom tools use Box for flexible component rendering
 			this.contentBox.setBgFn(bgFn);
+			this.contentBox.setBorderFn(borderFn);
 			this.contentBox.clear();
 
 			// Render call component
@@ -557,6 +566,7 @@ export class ToolExecutionComponent extends Container {
 		} else {
 			// Unknown tool with no registered definition - show generic fallback
 			this.contentText.setCustomBgFn(bgFn);
+			this.contentText.setBorderFn(borderFn);
 			this.contentText.setText(this.formatToolExecution());
 		}
 
