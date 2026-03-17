@@ -364,7 +364,6 @@ export async function refreshAnthropicToken(refreshToken: string): Promise<OAuth
 			grant_type: "refresh_token",
 			client_id: CLIENT_ID,
 			refresh_token: refreshToken,
-			scope: SCOPES,
 		});
 	} catch (error) {
 		throw new Error(`Anthropic token refresh request failed. url=${TOKEN_URL}; details=${formatErrorDetails(error)}`);
