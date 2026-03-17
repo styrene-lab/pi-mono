@@ -778,6 +778,25 @@ export class ToolExecutionComponent extends Container {
 		return output;
 	}
 
+	/** Glyph prefix for built-in tool headers. */
+	private static toolGlyph(name: string): string {
+		const glyphs: Record<string, string> = {
+			read: "▸",
+			edit: "▸",
+			write: "▸",
+			ls: "▸",
+			find: "▸",
+			grep: "▸",
+		};
+		return glyphs[name] ?? "▸";
+	}
+
+	/** Format tool name with glyph: ▸ read */
+	private static toolHeader(name: string): string {
+		const g = theme.fg("accent", ToolExecutionComponent.toolGlyph(name));
+		return `${g} ${theme.fg("toolTitle", theme.bold(name))}`;
+	}
+
 	private formatToolExecution(): string {
 		let text = "";
 		const invalidArg = theme.fg("error", "[invalid arg]");
@@ -795,7 +814,7 @@ export class ToolExecutionComponent extends Container {
 				pathDisplay += theme.fg("warning", `:${startLine}${endLine ? `-${endLine}` : ""}`);
 			}
 
-			text = `${theme.fg("toolTitle", theme.bold("read"))} ${pathDisplay}`;
+			text = `${ToolExecutionComponent.toolHeader("read")} ${pathDisplay}`;
 
 			if (this.result) {
 				const output = this.getTextOutput();
@@ -848,7 +867,7 @@ export class ToolExecutionComponent extends Container {
 			const path = rawPath !== null ? shortenPath(rawPath) : null;
 
 			text =
-				theme.fg("toolTitle", theme.bold("write")) +
+				ToolExecutionComponent.toolHeader("write") +
 				" " +
 				(path === null ? invalidArg : path ? theme.fg("accent", path) : theme.fg("toolOutput", "..."));
 
@@ -916,7 +935,7 @@ export class ToolExecutionComponent extends Container {
 				pathDisplay += theme.fg("warning", `:${firstChangedLine}`);
 			}
 
-			text = `${theme.fg("toolTitle", theme.bold("edit"))} ${pathDisplay}`;
+			text = `${ToolExecutionComponent.toolHeader("edit")} ${pathDisplay}`;
 
 			if (this.result?.isError) {
 				// Show error from result
@@ -942,7 +961,7 @@ export class ToolExecutionComponent extends Container {
 			const path = rawPath !== null ? shortenPath(rawPath || ".") : null;
 			const limit = this.args?.limit;
 
-			text = `${theme.fg("toolTitle", theme.bold("ls"))} ${path === null ? invalidArg : theme.fg("accent", path)}`;
+			text = `${ToolExecutionComponent.toolHeader("ls")} ${path === null ? invalidArg : theme.fg("accent", path)}`;
 			if (limit !== undefined) {
 				text += theme.fg("toolOutput", ` (limit ${limit})`);
 			}
@@ -981,7 +1000,7 @@ export class ToolExecutionComponent extends Container {
 			const limit = this.args?.limit;
 
 			text =
-				theme.fg("toolTitle", theme.bold("find")) +
+				ToolExecutionComponent.toolHeader("find") +
 				" " +
 				(pattern === null ? invalidArg : theme.fg("accent", pattern || "")) +
 				theme.fg("toolOutput", ` in ${path === null ? invalidArg : path}`);
@@ -1024,7 +1043,7 @@ export class ToolExecutionComponent extends Container {
 			const limit = this.args?.limit;
 
 			text =
-				theme.fg("toolTitle", theme.bold("grep")) +
+				ToolExecutionComponent.toolHeader("grep") +
 				" " +
 				(pattern === null ? invalidArg : theme.fg("accent", `/${pattern || ""}/`)) +
 				theme.fg("toolOutput", ` in ${path === null ? invalidArg : path}`);
@@ -1068,7 +1087,7 @@ export class ToolExecutionComponent extends Container {
 			}
 		} else {
 			// Generic tool (shouldn't reach here for custom tools)
-			text = theme.fg("toolTitle", theme.bold(this.toolName));
+			text = ToolExecutionComponent.toolHeader(this.toolName);
 
 			const content = JSON.stringify(this.args, null, 2);
 			text += `\n\n${content}`;
