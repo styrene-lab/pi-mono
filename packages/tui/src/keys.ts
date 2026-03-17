@@ -797,13 +797,21 @@ export function matchesKey(data: string, keyId: KeyId): boolean {
 				if (matchesModifyOtherKeys(data, CODEPOINTS.enter, MODIFIERS.shift)) {
 					return true;
 				}
-				// When Kitty protocol is active, legacy sequences are custom terminal mappings
+				// Legacy sequences for custom terminal mappings:
 				// \x1b\r = Kitty's "map shift+enter send_text all \e\r"
-				// \n = Ghostty's "keybind = shift+enter=text:\n"
+				//         = Windows Terminal sendInput \u001b\r (arrives as \x1b\r over SSH
+				//           when TTY line discipline does NOT convert \r→\n)
+				// \n     = Ghostty's "keybind = shift+enter=text:\n"
+				// \x1b\n = Windows Terminal sendInput \u001b\r over SSH when TTY converts \r→\n
+				//
+				// \x1b\r is also claimed by alt+enter in legacy (non-Kitty) mode, but
+				// shift+enter is checked first so this branch wins when shift is set.
 				if (_kittyProtocolActive) {
 					return data === "\x1b\r" || data === "\n";
 				}
-				return false;
+				// Non-Kitty fallback: match both \x1b\r and \x1b\n to handle Windows Terminal
+				// over SSH regardless of whether the TTY converts \r to \n.
+				return data === "\x1b\r" || data === "\x1b\n";
 			}
 			if (alt && !ctrl && !shift) {
 				// CSI u sequences (standard Kitty protocol)
