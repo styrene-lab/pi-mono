@@ -665,6 +665,12 @@ export class InteractiveMode {
 	 * Only shows new entries since last seen version, skips for resumed sessions.
 	 */
 	private getChangelogForDisplay(): string | undefined {
+		// When running under Omegon, suppress the upstream changelog entirely.
+		// Omegon provides its own version and changelog experience.
+		if (process.env.PI_SKIP_VERSION_CHECK) {
+			return undefined;
+		}
+
 		// Skip changelog for resumed/continued sessions (already have messages)
 		if (this.session.state.messages.length > 0) {
 			return undefined;
